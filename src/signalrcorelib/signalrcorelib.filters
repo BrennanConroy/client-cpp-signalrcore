@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\signalrcorelib\HttpConnection.cpp">
+      <Filter>src\signalrcorelib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\signalrcorelib\Source.cpp">
+      <Filter>src\signalrcorelib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\signalrcorelib\WebSocketsTransport.cpp">
+      <Filter>src\signalrcorelib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\signalrcorelib\HttpConnection.h">
+      <Filter>src\signalrcorelib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\signalrcorelib\WebSocketsTransport.h">
+      <Filter>src\signalrcorelib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d3b9f4eb-6db9-4223-abcc-fb74bf5c52e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\signalrcorelib">
+      <UniqueIdentifier>{6d7d82a5-98ac-450a-a87b-d2ba478d6b20}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\signalrcorelib\packages.config">
+      <Filter>src\signalrcorelib</Filter>
+    </None>
+  </ItemGroup>
+</Project>
