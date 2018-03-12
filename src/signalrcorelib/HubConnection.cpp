@@ -9,7 +9,7 @@ namespace signalr
 	enum MessageType
 	{
 		Negotiation = 0,
-		Invocation,
+		Invocation = 1,
 		StreamInvocation,
 		StreamItem,
 		Completion,
@@ -28,22 +28,29 @@ namespace signalr
 			switch (messageType.as_integer())
 			{
 			case MessageType::Negotiation:
+				// unused...
 				break;
 			case MessageType::Invocation:
 			{
 				auto method = value[L"target"];
 				auto args = value[L"arguments"];
+				_ASSERT(args.is_array());
 				break;
 			}
 			case MessageType::StreamInvocation:
-				break;
+				// Sent to server only, should not be received by client
+				throw std::runtime_error("Received unexcepted message type 'StreamInvocation'.");
 			case MessageType::StreamItem:
+				// TODO
 				break;
 			case MessageType::Completion:
+				// TODO
 				break;
 			case MessageType::CancelInvocation:
-				break;
+				// Sent to server only, should not be received by client
+				throw std::runtime_error("Received unexcepted message type 'CancelInvocation'.");
 			case MessageType::Ping:
+				// TODO
 				break;
 			}
 		});
@@ -63,16 +70,20 @@ namespace signalr
 		return mTransport->Stop();
 	}
 
+	pplx::task<void> HubConnection::Send(const utility::string_t& target, const utility::string_t& arguments)
+	{
+		auto args = web::json::value::parse(arguments);
+		_ASSERT(args.is_array());
+
+		web::json::value invocation;
+		invocation[L"type"] = web::json::value::value(MessageType::Invocation);
+		invocation[L"target"] = web::json::value::string(target);
+		invocation[L"arguments"] = args;
+		return SendCore(invocation.serialize() + L"\x1e");
+	}
+
 	pplx::task<void> HubConnection::SendCore(const utility::string_t& message)
 	{
-		//_ASSERT(message.is_array());
-		//web::json::value invocation;
-		//invocation[L"type"] = web::json::value::value(1);
-		//invocation[L"target"] = web::json::value::string(target);
-		//invocation[L"arguments"] = message;
-
-		//auto request = web::websockets::client::websocket_outgoing_message();
-		//request.set_utf8_message(utility::conversions::to_utf8string(invocation.serialize()) + "\x1e");
 		return mTransport->Send(message);
 	}
 

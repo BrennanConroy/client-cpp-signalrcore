@@ -12,13 +12,13 @@ namespace signalr
 	class HubConnection
 	{
 	public:
-		HubConnection(const utility::string_t& url, Transport transport);
+		HubConnection(const utility::string_t& url, Transport transport = Transport::WebSockets);
 		pplx::task<void> Start();
 		pplx::task<void> Stop();
 		//On
 		//Stream
 		//Invoke
-		//pplx::task<void> Send(const utility::string_t& method, );
+		pplx::task<void> Send(const utility::string_t& target, const utility::string_t& arguments = L"");
 
 		~HubConnection();
 	private:

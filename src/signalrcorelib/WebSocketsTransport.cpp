@@ -18,6 +18,10 @@ namespace signalr
 		{
 			uri.set_scheme(L"wss");
 		}
+		else
+		{
+			//???
+		}
 		mUrl = uri.to_string();
 	}
 

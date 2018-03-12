@@ -18,7 +18,7 @@ int main(void)
 		web::json::value args{};
 		args[0] = web::json::value(utility::conversions::to_string_t(msg));
 
-		//hubConnection.Send(L"Send", args);
+		hubConnection.Send(L"Send", args.serialize());
 	}
 
 	hubConnection.Stop().wait();
