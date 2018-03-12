@@ -1,5 +1,5 @@
 TODO:
-Support server response
-Pull Hub implementation layer out of websocketstransport
-Add Protocol layer (still only have json support for now)
-Move project to library with sample application
+- Support server response
+- Figure out nice send (params in c#)
+- Add Protocol layer (but only have json support for now)
+- Move project to library with sample application

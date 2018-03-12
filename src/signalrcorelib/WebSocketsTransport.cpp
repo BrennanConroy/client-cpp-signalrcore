@@ -5,42 +5,54 @@
 
 namespace signalr
 {
-	WebSocketsTransport::WebSocketsTransport()
+	WebSocketsTransport::WebSocketsTransport(const utility::string_t& url)
+		: mReceivedCallback([](const utility::string_t &) {})
 	{
 		mWebSocket = web::web_sockets::client::websocket_callback_client();
+		auto uri = web::uri_builder(url);
+		if (uri.scheme() == L"http")
+		{
+			uri.set_scheme(L"ws");
+		}
+		else if (uri.scheme() == L"https")
+		{
+			uri.set_scheme(L"wss");
+		}
+		mUrl = uri.to_string();
 	}
 
 	pplx::task<void> WebSocketsTransport::Start()
 	{
-		return mWebSocket.connect(L"ws://localhost:5000/default")
-		.then([=]()
+		return mWebSocket.connect(mUrl)
+		.then([&]()
 		{
-			auto negotiate = web::websockets::client::websocket_outgoing_message();
-
-			negotiate.set_utf8_message("{\"protocol\":\"json\"}\x1e");
-			mWebSocket.set_message_handler([](const web::websockets::client::websocket_incoming_message &message)
+			mWebSocket.set_message_handler([&](const web::websockets::client::websocket_incoming_message &message)
 			{
-				return message.extract_string().then([](const std::string& response)
+				return message.extract_string().then([&](const std::string& response)
 				{
 					std::cout << response << std::endl;
+					mReceivedCallback(utility::conversions::to_string_t(response));
 				});
 			});
-
-			return mWebSocket.send(negotiate);
 		});
 	}
 
-	pplx::task<void> WebSocketsTransport::Send(const utility::string_t& target, const web::json::value& message)
+	pplx::task<void> WebSocketsTransport::Send(const utility::string_t& message)
 	{
-		web::json::value invocation;
-		invocation[L"type"] = web::json::value::value(1);
-		invocation[L"target"] = web::json::value::string(target);
-		invocation[L"arguments"] = message;
-
 		auto request = web::websockets::client::websocket_outgoing_message();
-		request.set_utf8_message(utility::conversions::to_utf8string(invocation.serialize()) + "\x1e");
+		request.set_utf8_message(utility::conversions::to_utf8string(message));
 
 		return mWebSocket.send(request);
+	}
+
+	void WebSocketsTransport::OnReceived(std::function<void(const utility::string_t&)> func)
+	{
+		mReceivedCallback = func;
+	}
+
+	pplx::task<void> WebSocketsTransport::Stop()
+	{
+		return mWebSocket.close();
 	}
 
 	WebSocketsTransport::~WebSocketsTransport()

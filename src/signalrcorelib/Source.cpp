@@ -2,36 +2,24 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 #include <iostream>
-#include "HttpConnection.h"
+#include "HubConnection.h"
 #include "WebSocketsTransport.h"
 
 int main(void)
 {
-	auto s = signalr::WebSocketsTransport();
-	s.Start().wait();
-	//auto httpConnection = signalr::HttpConnection(L"http://localhost:5000/default/negotiate");
-	//httpConnection.start();
-	//auto hubConnection = HubConnection(url);
-	//hubConnection.On("send", msg => { std::cout << msg << std::endl; });
-	//hubConnection.Start();
-	//hubConnection.Invoke("Send", "test");
-	std::string k;
+	auto hubConnection = signalr::HubConnection(L"http://localhost:5000/default", Transport::WebSockets);
+	hubConnection.Start().wait();
+	std::string msg;
 	while (true)
 	{
-		std::cin >> k;
-		if (k == "s")
+		std::cin >> msg;
+		if (msg == "s")
 			break;
 		web::json::value args{};
-		args[0] = web::json::value(utility::conversions::to_string_t(k));
+		args[0] = web::json::value(utility::conversions::to_string_t(msg));
 
-		s.Send(L"Send", args);
+		//hubConnection.Send(L"Send", args);
 	}
+
+	hubConnection.Stop().wait();
 }
-
-class HubConnection
-{
-public:
-	HubConnection(std::string url)
-	{
-	}
-};

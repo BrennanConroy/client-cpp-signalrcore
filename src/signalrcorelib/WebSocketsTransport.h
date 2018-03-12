@@ -5,18 +5,24 @@
 
 #include <cpprest\ws_client.h>
 #include <cpprest\json.h>
+#include "ITransport.h"
 
 namespace signalr
 {
-	class WebSocketsTransport
+	class WebSocketsTransport : public ITransport
 	{
 	public:
-		WebSocketsTransport();
+		WebSocketsTransport(const utility::string_t& url);
 		pplx::task<void> Start();
-		pplx::task<void> Send(const utility::string_t& target, const web::json::value& arguments);
+		pplx::task<void> Send(const utility::string_t& message);
+		pplx::task<void> Stop();
+
+		void OnReceived(std::function<void(const utility::string_t&)> func);
 
 		~WebSocketsTransport();
 	private:
 		web::web_sockets::client::websocket_callback_client mWebSocket;
+		utility::string_t mUrl;
+		std::function<void(const utility::string_t&)> mReceivedCallback;
 	};
 }
