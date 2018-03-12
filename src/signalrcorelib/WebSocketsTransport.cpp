@@ -34,7 +34,7 @@ namespace signalr
 			{
 				return message.extract_string().then([&](const std::string& response)
 				{
-					std::cout << response << std::endl;
+					std::cout << "From websockets transport: " << response << std::endl;
 					mReceivedCallback(utility::conversions::to_string_t(response));
 				});
 			});

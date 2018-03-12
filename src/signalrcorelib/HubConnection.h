@@ -6,6 +6,7 @@
 #include <cpprest\uri.h>
 #include "Transports.h"
 #include "ITransport.h"
+#include <unordered_map>
 
 namespace signalr
 {
@@ -15,6 +16,9 @@ namespace signalr
 		HubConnection(const utility::string_t& url, Transport transport = Transport::WebSockets);
 		pplx::task<void> Start();
 		pplx::task<void> Stop();
+
+		void On(const utility::string_t& method, std::function<void(const utility::string_t&)> func);
+
 		//On
 		//Stream
 		//Invoke
@@ -25,5 +29,6 @@ namespace signalr
 		pplx::task<void> SendCore(const utility::string_t& message);
 		utility::string_t mUrl;
 		ITransport* mTransport;
+		std::unordered_map<utility::string_t, std::function<void(const utility::string_t&)>> mHandlers;
 	};
 }

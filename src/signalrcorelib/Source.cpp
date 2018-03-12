@@ -8,7 +8,14 @@
 int main(void)
 {
 	auto hubConnection = signalr::HubConnection(L"http://localhost:5000/default", Transport::WebSockets);
+
+	hubConnection.On(L"Send", [](const utility::string_t& message)
+	{
+		std::cout << "From 'Send' HubConnection method: " << utility::conversions::to_utf8string(message) << std::endl;
+	});
+
 	hubConnection.Start().wait();
+
 	std::string msg;
 	while (true)
 	{
